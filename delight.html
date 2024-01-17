@@ -100,6 +100,62 @@
                 });
             }
         });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+    const gridContainer = document.getElementById("grid-container");
+    const grid = createGrid();
+    let currentPlayer = 1;
+
+    function createGrid() {
+        const grid = [];
+        for (let i = 0; i < 4; i++) {
+            const row = [];
+            for (let j = 0; j < 4; j++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                cell.addEventListener("click", handleCellClick);
+                gridContainer.appendChild(cell);
+                row.push({ type: "empty", element: cell });
+            }
+            grid.push(row);
+        }
+        return grid;
+    }
+
+    function handleCellClick(event) {
+        const row = event.target.dataset.row;
+        const col = event.target.dataset.col;
+
+        // Randomly place a wire or bulb on each click
+        const randomType = Math.random() < 0.5 ? "wire" : "bulb";
+
+        if (grid[row][col].type === "empty") {
+            grid[row][col].type = randomType;
+            grid[row][col].element.classList.add(randomType);
+        } else {
+            grid[row][col].type = "empty";
+            grid[row][col].element.classList.remove("wire", "bulb");
+        }
+
+        // Check for connected bulbs and update the display
+        updateBulbConnections();
+        currentPlayer = 3 - currentPlayer; // Switch players
+    }
+
+    function updateBulbConnections() {
+        // Implement the logic to check and update bulb connections here
+        // For simplicity, this example assumes that all bulbs light up
+        grid.forEach(row => {
+            row.forEach(cell => {
+                if (cell.type === "bulb") {
+                    cell.element.style.opacity = 1;
+                }
+            });
+        });
+    }
+});
     </script>
 </body>
 </html>
