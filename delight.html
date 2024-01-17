@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 5px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #eee;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .wire, .bulb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bulb {
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div id="grid-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const gridContainer = document.getElementById("grid-container");
+            const grid = createGrid();
+            let currentPlayer = 1;
+
+            function createGrid() {
+                const grid = [];
+                for (let i = 0; i < 4; i++) {
+                    const row = [];
+                    for (let j = 0; j < 4; j++) {
+                        const cell = document.createElement("div");
+                        cell.classList.add("cell");
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        cell.addEventListener("click", handleCellClick);
+                        gridContainer.appendChild(cell);
+                        row.push({ type: "empty", element: cell });
+                    }
+                    grid.push(row);
+                }
+                return grid;
+            }
+
+            function handleCellClick(event) {
+                const row = event.target.dataset.row;
+                const col = event.target.dataset.col;
+
+                // Toggle between wire and bulb on each click
+                if (grid[row][col].type === "empty") {
+                    grid[row][col].type = "wire";
+                    grid[row][col].element.classList.add("wire");
+                } else if (grid[row][col].type === "wire") {
+                    grid[row][col].type = "bulb";
+                    grid[row][col].element.classList.remove("wire");
+                    grid[row][col].element.classList.add("bulb");
+                } else if (grid[row][col].type === "bulb") {
+                    grid[row][col].type = "empty";
+                    grid[row][col].element.classList.remove("bulb");
+                }
+
+                // Check for connected bulbs and update the display
+                updateBulbConnections();
+                currentPlayer = 3 - currentPlayer; // Switch players
+            }
+
+            function updateBulbConnections() {
+                // Implement the logic to check and update bulb connections here
+                // For simplicity, this example assumes that all bulbs light up
+                grid.forEach(row => {
+                    row.forEach(cell => {
+                        if (cell.type === "bulb") {
+                            cell.element.style.opacity = 1;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
